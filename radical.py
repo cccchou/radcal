@@ -6,7 +6,7 @@ import os
 
 '''
 editor by alex chou
-link：alex_chou@sjtu.edu.cn
+mail：alex_chou@sjtu.edu.cn
 '''
 
 
