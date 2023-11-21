@@ -5,8 +5,8 @@ from scipy.interpolate import interp1d
 import os
 
 '''
-editor by 周郑鹏
-联系方式：alex_chou@sjtu.edu.cn
+editor by alex chou
+link：alex_chou@sjtu.edu.cn
 '''
 
 
