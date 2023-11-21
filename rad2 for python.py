@@ -5,10 +5,9 @@ from scipy.stats import norm
 from scipy.interpolate import interp1d
 import time
 '''
-这个版本是rad2的python版本，经过验证结果完全正确！！！
-radcal等有时间再转换，源代码无法跑通
-editor by 周郑鹏
-联系方式：alex_chou@sjtu.edu.cn
+
+editor by alex chou
+mail：alex_chou@sjtu.edu.cn
 '''
 
 
