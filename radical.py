@@ -5,8 +5,8 @@ from scipy.interpolate import interp1d
 import os
 
 '''
-editor by 周郑鹏
-联系方式：alex_chou@sjtu.edu.cn
+editor by Alex_chou
+mail：alex_chou@sjtu.edu.cn
 '''
 
 
@@ -568,7 +568,7 @@ print("\nHi, ResAge is here to help you with reservoir age offset calculation!\n
 print("The radcal function is designed to work with pairs of reservoir-derived 14C age and corresponding calendar age.\n")
 
 if __name__ == "__main__":
-    radcal("Skiner2023",threshold=1e-14)
+    radcal()
 
 
 
