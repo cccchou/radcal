@@ -5,8 +5,8 @@ from scipy.interpolate import interp1d
 import os
 
 '''
-editor by alex chou
-mail：alex_chou@sjtu.edu.cn
+editor by 周郑鹏
+联系方式：alex_chou@sjtu.edu.cn
 '''
 
 
@@ -19,6 +19,7 @@ def radcal(name="example_radcal_Southon2012", cc=1, cc1="IntCal20.14C", cc2="SHC
 def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, convolsteps, prob, threshold,
             hpdsteps, storedat, export_uncal_pdf, mixture_pdf, delta_14R, dcp, f_14R):
     dets = pd.read_csv(f"InputData/{name}/{name}{ext}", sep=sep)
+
 
     # check for consistency
     if dets.shape[1] != 5:
@@ -38,6 +39,7 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
     rad_res_sd = dets["Reservoir_derived_14C_error"]
     cal_age = dets["Calendar_age"]
     cal_sigma = dets["Calendar_age_error"]
+
 
 
 
@@ -214,7 +216,7 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
     else:
         raise ValueError("Invalid value for cc.")
 
-    print(f"Uncalibrating calendar ages using the {ccname} calibration curve and calculating reservoir age offsets...")
+    print(f"\nUncalibrating calendar ages using the {ccname} calibration curve and calculating reservoir age offsets...")
 
 # Prepare calcurve for calculation in F14C and interpolate
     theta = calcurve.iloc[:, 0]
@@ -229,6 +231,7 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
     f_sigma = interp1d(calcurve.iloc[:, 0], f_sigma, kind='linear')(theta_interp)
 
     dat = pd.DataFrame({
+    'id':id_col,
     'cal_age': cal_age,
     'cal_sigma': cal_sigma,
     'rad_res': rad_res,
@@ -236,7 +239,7 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
     })
 
     temp=dict()
-    print("\nrunning",end=" ")
+    print("\nrunning")
     for i in range(len(dat['cal_age'])):
         #print(".")
         # Implement or replace uncal_dist function
@@ -268,9 +271,15 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
         dat.loc[i,'med_resage'] = resage[resage["pdf"].cumsum()<=0.5]["theta"].iloc[-1]  # medians of reservoir distributions
         dat.loc[i,'mode_resage'] = resage[resage["pdf"]==resage["pdf"].max()]["theta"].values  # maximum densities of reservoir distributions
 
-        print(".", end='', flush=True)
+        if i%100 == 0:
 
-    dat.to_csv("output.csv", index=False)
+            print(".", end='')
+            print(f"已经完成了{i+1}/{len(dat)}")
+
+
+
+
+    dat.to_csv(f"InputData/{name}/{name}{cc}_output.csv", index=False)
 
     print("\nWork has been done successfully, check outputs in your folder.\n")
     if storedat:
@@ -282,7 +291,7 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
 # Export the uncalibrated probability density if required
 
     if export_uncal_pdf:
-        print("Exporting your uncalibrated ages...")
+        print("Exporting your uncalibrated ages")
         mini = []
         maxi = []
         for i in range(len(dat)):
@@ -517,9 +526,10 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
         hpd_file.write(f"{ref}ranges at {100 * prob}% confidence intervals\n")
 
         for i in range(dat.shape[0]):
-            hpd_file.write(f"\n\nIdentification_number: {dat['id'][i]}\nMinRange\tMaxRange\tprobability\n")
+            hpd_file.write(f"\n\nIdentification_number: {dets['id'][i]}\nMinRange\tMaxRange\tprobability\n")
             hpds = temp[f'hpd_resage_{i}']
-            pdf_info = pd.concat([pd.DataFrame(dat['mode_resage'][i]), pd.DataFrame(dat['mid1_resage'][i]), pd.DataFrame(dat['med_resage'][i])], axis=1)
+            pdf_info = np.column_stack((dat['mode_resage'][i], dat['mid1_resage'][i],dat['med_resage'][i]))
+            pdf_info=pd.DataFrame(data=pdf_info)
 
             if f_14R:
                 hpds_save = hpds.iloc[:, 0].copy()
@@ -539,11 +549,11 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
                 pdf_info = np.round(100 * (1 - np.exp(pdf_info / -8033)), 2)
 
             for j in range(hpds.shape[0]):
-                hpd_file.write(f"{hpds[j, 0]}\t{hpds[j, 1]}\t{hpds[j, 2]}\n")
+                hpd_file.write(f"{hpds.iloc[j, 0]}\t{hpds.iloc[j, 1]}\t{hpds.iloc[j, 2]}\n")
 
             hpd_file.write("Mode\tMidRange\tMedian\n")
-            for l in range(pdf_info.shape[1]):
-                hpd_file.write(f"{pdf_info[0, l]}\t{pdf_info[1, l]}\t{pdf_info[2, l]}\n")
+            for l in range(pdf_info.shape[0]):
+                hpd_file.write(f"{pdf_info.iloc[l, 0]}\t{pdf_info.iloc[l, 1]}\t{pdf_info.iloc[l, 2]}\n")
 
         hpd_file.close()
     
@@ -551,14 +561,14 @@ def _radcal(name, cc, cc1, cc2, cc3, ext, sep, yrsteps, uncalsteps, radsteps, co
     print("Work has been done successfully, check outputs in your folder.\n\n")
 
 # List the available data
-    Data = os.listdir("InputData/")
+Data = os.listdir("InputData/")
 
 # Welcome
-    print("Hi, ResAge is here to help you with reservoir age offset calculation!\n")
-    print("The radcal function is designed to work with pairs of reservoir-derived 14C age and corresponding calendar age.\n\n")
+print("\nHi, ResAge is here to help you with reservoir age offset calculation!\n")
+print("The radcal function is designed to work with pairs of reservoir-derived 14C age and corresponding calendar age.\n")
 
 if __name__ == "__main__":
-    radcal()
+    radcal("Skiner2023",threshold=1e-14)
 
 
 
