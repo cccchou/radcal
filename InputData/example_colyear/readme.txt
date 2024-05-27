@@ -1,0 +1,1 @@
+some data from Siani et al., RADIOCARBON, 42(2), 271–280 (2000)

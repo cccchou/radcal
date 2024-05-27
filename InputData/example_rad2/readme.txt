@@ -1,0 +1,1 @@
+some data from Bondevik et al., Quaternary Research 52, 104–114 (1999)
