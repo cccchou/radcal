@@ -6,52 +6,63 @@ import os
 import time
 from tqdm import tqdm
 from colorama import Fore
+from .abs import abc_rad
 
-
-class Radical(object):
+class Radical(abc_rad):
 
     def __init__(self,
-                 name="example_radcal_Southon2012",
-                 cc=1,
-                 yrsteps=1,
-                 uncalsteps=5,
-                 radsteps=1,
-                 convolsteps=1,
-                 prob=0.95,
-                 threshold=1e-6,
-                 hpdsteps=1,
-                 storedat=False,
-                 export_uncal_pdf=False,
-                 mixture_pdf=False,
-                 delta_14R=False,
-                 dcp=False,
-                 f_14R=False,
-                 export_resage_pdf=True):
+                 name: str = "example_radcal_Southon2012",
+                 cc: int = 1,
+                 uncalsteps: int = 5,
+                 radsteps: int = 1,
+                 convolsteps: int = 1,
+                 threshold: float = 1e-6,
+                 export_uncal_pdf: bool = False,
+                 mixture_pdf: bool = False,
+                 export_resage_pdf: bool = True,
+                 delta_14R: bool = False,
+                 dcp: bool = False,
+                 f_14R: bool = False,
+                 yrsteps: int = 1,
+                 prob: float = 0.95,
+                 hpdsteps: int = 1
+                 ) -> None:
         """
-        :param name: file name
-        :param cc: calibrate name
-        :param cc1: IntCal20.14C
-        :param cc2: SHCal13.14C
-        :param cc3: IntCal13.14C
-        :param ext: file format
-        :param sep: read file separate way
-        :param yrsteps: resolution by calibrate age
-        :param uncalsteps: resolution by uncalibrate
-        :param radsteps:resolution by radiocarbon
-        :param convolsteps:resolution by convolution
-        :param prob: the maximum possibility
-        :param threshold: threshold
-        :param hpdsteps: resolution by hpd
-        :param storedat: whether store data
-        :param export_uncal_pdf: whether export pdf
-        :param mixture_pdf: whether mixture pdf
-        :param delta_14R: whether export 14C
-        :param dcp:whether export dcp
-        :param f_14R:whether export f_14C
+        Initialize a Radical object.
+
+        :param name: file name (str)
+        :param cc: calibrate name (int)
+        :param cc1: IntCal20.14C (int)
+        :param cc2: SHCal13.14C (int)
+        :param cc3: IntCal13.14C (int)
+        :param ext: file format (str)
+        :param sep: read file separate way (str)
+        :param yrsSteps: resolution by calibrate age (int)
+        :param uncalSteps: resolution by uncalibrate (int)
+        :param radSteps: resolution by radiocarbon (int)
+        :param convolSteps: resolution by convolution (int)
+        :param prob: the maximum possibility (float)
+        :param threshold: threshold (float)
+        :param hpdSteps: resolution by hpd (int)
+        :param storeData: whether store data (bool)
+        :param exportUncalPdf: whether export pdf (bool)
+        :param mixturePdf: whether mixture pdf (bool)
+        :param delta_14R: whether export 14C (bool)
+        :param dcp: whether export dcp (bool)
+        :param f_14R: whether export f_14C (bool)
 
         Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations.Quaternary Geochronology 29:97-103, doi: 10.1016/j.quageo.2015.05.023
         """
-        self.name = name
+        super().__init__(
+            name=name,
+            cc=cc,
+            threshold=threshold,
+            delta_14R=delta_14R,
+            dcp=dcp,
+            f_14R=f_14R,
+            yrsteps=yrsteps,
+            prob=prob,
+            hpdsteps=hpdsteps)
         match cc:
             case 1:
                 self.cc = "IntCal20.14C"
@@ -63,22 +74,18 @@ class Radical(object):
                 raise ValueError(
                     "Invalid value for cc. Please check the manual.")
         self.calcurve = pd.read_table(self.cc, header=None)
-        self.ext = ".csv"
-        self.sep = ","
-        self.yrsteps = yrsteps
+
+
         self.uncalsteps = uncalsteps
         self.radsteps = radsteps
         self.convolsteps = convolsteps
-        self.prob = prob
-        self.threshold = threshold
-        self.hpdsteps = hpdsteps
-        self.storedat = storedat
+
+
+
         self.export_uncal_pdf = export_uncal_pdf
         self.export_resage_pdf = export_resage_pdf
         self.mixture_pdf = mixture_pdf
-        self.delta_14R = delta_14R
-        self.dcp = dcp
-        self.f_14R = f_14R
+
 
         self.theta = self.calcurve.iloc[:, 0]
         self.f_mu = np.exp(-self.calcurve.iloc[:, 1] / 8033)
@@ -129,41 +136,51 @@ class Radical(object):
         })
 
         temp = dict()
-        print("\n.running")
+        print("\nrunning")
         now = time.time()
         for i in tqdm(range(len(self.dat['cal_age'])),
                       desc="processing",
                       total=len(self.dat['cal_age']),
                       colour="blue"):
-            uncalib = self._uncaldist(self.dat['cal_age'][i],
-                                      self.dat['cal_sigma'][i])  #prior
             temp[
-                f"uncalib_{i}"] = uncalib  # resulting uncalibrated (atm radiocarbon distribution) distribution
+                f"uncalib_{i}"] = self._uncaldist(self.dat['cal_age'][i],
+                                      self.dat['cal_sigma'][i])  #prior
+              # resulting uncalibrated (atm radiocarbon distribution) distribution
             temp[f"hpd_uncal_{i}"] = self._hpd(
-                data=uncalib
+                data=temp[
+                f"uncalib_{i}"]
             )  # uncalibrated highest probability density corresponding to prob posterior
             
-            self.dat.loc[i, "mid1"] = round(
+            temp[f"mid1_uncal_{i}"] = round(
                 (temp[f"hpd_uncal_{i}"]["min"].values[0] +
                  temp[f"hpd_uncal_{i}"]["max"].values[0]) /
                 2)  # midpoints of uncalibrated ranges
-            radyrs = uncalib["theta"]
-            self.dat.loc[i, "mid2"] = round(
+            radyrs = temp[
+                f"uncalib_{i}"]["theta"]
+            temp[f"mid2_uncal_{i}"] = round(
                 np.mean([max(radyrs), min(radyrs)])
             )  # midpoints of entire uncalibrated distributions (with probabilities beyond threshold)
-            self.dat.loc[i, "wmn"] = round(
+            temp[f"wmn_uncal_{i}"] = round(
                 np.average(
-                    uncalib["theta"], weights=1 /
-                    uncalib["pdf"]))  # weighted means of uncalibrated ranges
-            self.dat.loc[i, "med"] = uncalib[uncalib["pdf"].cumsum() <= 0.5][
+                    temp[
+                f"uncalib_{i}"]["theta"], weights=1 /
+                    temp[
+                f"uncalib_{i}"]["pdf"]))  # weighted means of uncalibrated ranges
+            temp[f"med_uncal_{i}"] = temp[
+                f"uncalib_{i}"][temp[
+                f"uncalib_{i}"]["pdf"].cumsum() <= 0.5][
                 "theta"].iloc[-1]  # medians of uncalibrated distributions
-            self.dat.loc[i, "mode"] = uncalib[
-                uncalib["pdf"] == uncalib["pdf"].max(
+            temp[f"mode_uncal_{i}"] = temp[
+                f"uncalib_{i}"][
+                temp[
+                f"uncalib_{i}"]["pdf"] == temp[
+                f"uncalib_{i}"]["pdf"].max(
                 )]["theta"].values  # maximum densities of uncalibrated distributions
 
             # Implement or replace convolution function
         
-            resage = self._convolution(uncalib, self.dat['rad_res'][i],
+            resage = self._convolution(temp[
+                f"uncalib_{i}"], self.dat['rad_res'][i],
                                        self.dat['rad_res_sd'][i])
             temp[f'resage_{i}'] = resage  # resulting reservoir age
 
@@ -171,28 +188,27 @@ class Radical(object):
                 data=resage
             )  # reservoir age highest probability density corresponding to prob
 
-            self.dat.loc[i, 'mid1_resage'] = round(
+            temp[f"mid1_resage_{i}"] = round(
                 (temp[f"hpd_resage_{i}"]["min"].values[0] +
                  temp[f"hpd_resage_{i}"]["max"].values[0]) /
                 2)  # midpoints of reservoir ranges
             resyrs = resage.iloc[:, 0]
-            self.dat.loc[i, 'mid2_resage'] = round(
+            temp[f"mid2_resage_{i}"] = round(
                 np.mean([max(resyrs), min(resyrs)])
             )  # midpoints of entire reservoir age distributions (with probabilities beyond threshold)
-            self.dat.loc[i, 'wmn_resage'] = round(
+            temp[f"wmn_resage_{i}"] = round(
                 np.average(
                     resage.iloc[:, 0], weights=1 /
                     resage.iloc[:, 1]))  # weighted means of reservoir ranges
-            self.dat.loc[i, 'med_resage'] = resage[resage["pdf"].cumsum(
+            temp[f"med_resage_{i}"] = resage[resage["pdf"].cumsum(
             ) <= 0.5]["theta"].iloc[-1]  # medians of reservoir distributions
-            self.dat.loc[
-                i, 'mode_resage'] = resage[resage["pdf"] == resage["pdf"].max(
+            temp[f"mode_resage_{i}"] = resage[resage["pdf"] == resage["pdf"].max(
                 )]["theta"].values  # maximum densities of reservoir distributions
 
             
 
         print(
-            f"the total spending time is {(time.time()-now)//60}min{round(time.time()-now-60*((time.time()-now)//60),1)}s "
+            f"the total spending time is {(time.time()-now)//60}min{round(time.time()-now-60*((time.time()-now)//60),1)}s\n"
         )
         self.temp = temp
 
@@ -207,12 +223,7 @@ class Radical(object):
 
             self._mixture_pdf
 
-        self.dat.to_csv(
-            f"InputData/{self.name}/{self.name}_using_{self.cc}_output.csv",
-            index=False)
-
-        print(
-            "Work has been done successfully, check outputs in your folder.\n")
+        return "Export age completed successfully"
 
     def _uncaldist(self, cal_age, cal_sigma):
         """
@@ -427,7 +438,7 @@ class Radical(object):
             else:
                 # construct the HPD interval from the indices of the data points
                 dif = np.concatenate(
-                    (np.array([dat.iloc[0, 0]]),
+                    np.array([dat.iloc[0, 0]]),
                     np.sort(np.append(dat.iloc[dif, 0],
                                       dat.iloc[dif + 1,
                                               0])), dat.iloc[len(dat) - 1,
@@ -449,30 +460,7 @@ class Radical(object):
         return hpds
 
 
-    @property
-    def _assert(self):
-        dets = pd.read_csv(f"InputData/{self.name}/{self.name}{self.ext}",
-                           sep=self.sep)
 
-        # check for consistency
-        if dets.shape[1] != 5:
-            raise ValueError(
-                "Your input file should contain 5 columns.\nPlease, check the template designed for the radcal function."
-            )
-
-        if min(dets.iloc[:, 1]) < 0 or min(dets.iloc[:, 3]) < 0:
-            raise ValueError(
-                "At least one of your radiocarbon data or one of your calendar age is negative."
-                "\nResAge is not designed to work with post-bomb samples."
-                "\nRemove such data from the input file.")
-
-        if self.delta_14R and (self.dcp or self.f_14R or self.dcp or self.f_14R
-                               or self.dcp and self.f_14R and self.delta_14R):
-            raise ValueError(
-                "Please, choose only one metric: reservoir age offset (default), f.14R, delta.14R, or dcp"
-            )
-
-        # prepare for reservoir age calculation
 
     @property
     def _export_uncal_pdf(self):
@@ -492,18 +480,18 @@ class Radical(object):
             maxi.append(max(self.temp[f"uncalib_{i}"]["theta"]))
         min_val = min(mini)
         max_val = max(maxi)
-        header = []
-        cal_age = np.zeros(
+        header = ["Uncalibrated_age_14C_BP"]
+        uncal_age = np.zeros(
             (int(np.floor(max_val - min_val + 1)), 1 + self.dat.shape[0]))
-        cal_age[:, 0] = np.arange(min_val, max_val + 1, self.radsteps)
-        # cal_age = pd.DataFrame({"uncal_year_BP": np.arange(min_val, max_val + 1, self.yrsteps)})
+        uncal_age[:, 0] = np.arange(min_val, max_val + 1, self.radsteps)
+
         for i in range(len(self.dat)):
             d = max(np.diff(self.temp[f"uncalib_{i}"]["theta"]))
             if d > 1:
                 raise ValueError(
                     "Please, decrease the threshold parameter: e.g. threshold = 1e-14 in the command line."
                 )
-            cal_age[int(
+            uncal_age[int(
                 np.floor((
                     np.min(self.temp[f'uncalib_{i}'].iloc[:, 0]) -
                     min_val))):int(
@@ -513,7 +501,9 @@ class Radical(object):
                     i + 1] = self.temp[f'uncalib_{i}'].iloc[:, 1]
 
             header.append(self.id_col[i])
-
+        pd.DataFrame(uncal_age, columns=header).to_csv(
+            f"InputData/{self.name}/{self.name}_{self.cc}_Uncalibrated_age_pdfs{self.ext}",
+            index=False)
 
         for i in range(len(self.dat)):
             hpds = self.temp[f"hpd_uncal_{i}"]
@@ -523,34 +513,29 @@ class Radical(object):
 
         if test == 1:
             # Export the uncalibrated age ranges as a single CSV file
-            export_calib = pd.DataFrame({
-                "UncalibratedMinRange_at_{}%".format(100 * self.prob):
-                    hpds["min"].values,
-                "UncalibratedMaxRange_at_{}%".format(100 * self.prob):
-                    hpds["max"].values,
-                "Mode":
-                    self.dat[f"mode"][i],
-                "MidRange":
+            export_uncalib = pd.DataFrame(np.zeros((len(self.dat),5)))
+            for i in range(len(self.dat)):
+                hpds=self.temp[f"hpd_uncal_{i}"]
+                export_uncalib.iloc[i,0] = hpds.iloc[0,0]
+                export_uncalib.iloc[i,1] = hpds.iloc[0,1]
+                export_uncalib.iloc[i,2] = self.temp[f"mode_uncal_{i}"]
+                export_uncalib.iloc[i,3] = self.temp[f"mid1_uncal_{i}"] 
+                export_uncalib.iloc[i,4] = self.temp[f"med_uncal_{i}"]
 
-                    self.dat[f"mid1"][i],
-                "Median":
+            colnames=[f"UncalibratedMinRange_at_{100*self.prob}%",
+            f"UncalibratedMaxRange_at_{100*self.prob}%",
+            "Mode","MidRange","Median"]
+            
+            export_uncalib.columns = colnames
 
-                    self.dat[f"med"][i]
-            })
-
-            colnames = [
-                f"{self.id_col[i]}_{col}" for col in export_calib.columns
-            ]
-            export_calib.columns = colnames
-
-            cal_output = pd.concat([pd.DataFrame(self.id_col), export_calib], axis=1)
+            cal_output = pd.concat([pd.DataFrame(self.id_col), export_uncalib], axis=1)
             cal_output.to_csv(
                 f"InputData/{self.name}/{self.name}{self.cc}_Uncalibrated_age_ranges_at_{100 * self.prob}%{self.ext}",
                 index=False
             )
         else:
             # Export the uncalibrated age ranges as a text file
-            ref = "Uncalibrated_"
+            ref = "Uncalibrated_14C_age_"
             hpd_file = open(
                 f"InputData/{self.name}/{self.name}{self.cc}_{ref}ranges.txt",
                 "w"
@@ -565,9 +550,9 @@ class Radical(object):
                 )
                 hpds = self.temp[f"hpd_uncal_{i}"]
                 pdf_info = pd.DataFrame({
-                    "Mode": [self.dat.loc[i, f"mode"]],
-                    "MidRange": [self.dat.loc[i, f"mid1"]],
-                    "Median": [self.dat.loc[i, f"med"]]
+                    "Mode": self.temp[f"{mode_uncal_[i]}"],
+                    "MidRange": self.temp[f"{mid1_uncal_[i]}"],
+                    "Median": self.temp[f"{med_uncal_[i]}"],
                 })
 
                 for j in range(len(hpds)):
@@ -583,9 +568,9 @@ class Radical(object):
 
             hpd_file.close()
 
-            print("Export completed successfully.")
+        print("Export uncalibrated age completed successfully.")
 
-            print("Export completed successfully.")
+            
 
     @property
     def _mixture_pdf(self):
@@ -685,6 +670,7 @@ class Radical(object):
         None
         """
         # Find the min and max reservoir ages among all the reservoir age density probabilities
+        print("Exporting your reservoir ages")
         mini = []
         maxi = []
 
@@ -733,7 +719,7 @@ class Radical(object):
         res_age.to_csv(
             f"InputData/{self.name}/{self.name}{self.cc}_{ref2}pdfs{self.ext}",
             index=False)
-        print("\n")
+        
 
         #export res_age
         for i in range(self.dat.shape[0]):
@@ -751,54 +737,54 @@ class Radical(object):
 
             for i in range(self.dat.shape[0]):
                 hpds = self.temp[f"hpd_resage_{i}"]
-                export_resage[i, 0] = hpds.iloc[:, 0]
-                export_resage[i, 1] = hpds.iloc[:, 1]
-                export_resage[i, 2] = self.dat["mode_resage"][i]
-                export_resage[i, 3] = self.dat["mid1_resage"][i]
-                export_resage[i, 4] = self.dat["med_resage"][i]
+                export_resage[i, 0] = hpds.iloc[0,0]
+                export_resage[i, 1] = hpds.iloc[0,1]
+                export_resage[i, 2] = self.temp[f"mode_resage_{i}"]
+                export_resage[i, 3] = self.temp[f"mid1_resage_{i}"]
+                export_resage[i, 4] = self.temp[f"med_resage_{i}"]
 
                 if self.f_14R:
-                    export_resage[i, 0] = np.round(np.exp(hpds[:, 1] / -8033),
+                    export_resage[i, 0] = np.round(np.exp(hpds.iloc[1] / -8033),
                                                    4)
-                    export_resage[i, 1] = np.round(np.exp(hpds[:, 0] / -8033),
+                    export_resage[i, 1] = np.round(np.exp(hpds.iloc[0] / -8033),
                                                    4)
                     export_resage[i, 2] = np.round(
-                        np.exp(self.dat["mode_resage"][i] / -8033), 4)
+                        np.exp(self.temp[f"mode_resage_{i}"] / -8033), 4)
                     export_resage[i, 3] = np.round(
-                        np.exp(self.dat["mid1_resage"][i] / -8033), 4)
+                        np.exp(self.temp[f"mid1_resage_{i}"] / -8033), 4)
                     export_resage[i, 4] = np.round(
-                        np.exp(self.dat["med_resage"][i] / -8033), 4)
+                        np.exp(self.temp[f"med_resage_{i}"] / -8033), 4)
                     ref, ref2, ref3 = "F14R_Min_Range", "F14R_Max_Range", "F14R_"
 
                 if self.delta_14R:
                     export_resage[i, 0] = np.round(
-                        1000 * (np.exp(hpds[:, 1] / -8033) - 1), 1)
+                        1000 * (np.exp(hpds.iloc[0,1] / -8033) - 1), 1)
                     export_resage[i, 1] = np.round(
-                        1000 * (np.exp(hpds[:, 0] / -8033) - 1), 1)
+                        1000 * (np.exp(hpds.iloc[0,0] / -8033) - 1), 1)
                     export_resage[i, 2] = np.round(
                         1000 *
-                        (np.exp(self.dat["mode_resage"][i] / -8033) - 1), 1)
+                        (np.exp(self.temp[f"mode_resage_{i}"] / -8033) - 1), 1)
                     export_resage[i, 3] = np.round(
                         1000 *
-                        (np.exp(self.dat["mid1_resage"][i] / -8033) - 1), 1)
+                        (np.exp(self.temp[f"mid1_resage_{i}"] / -8033) - 1), 1)
                     export_resage[i, 4] = np.round(
-                        1000 * (np.exp(self.dat["med_resage"][i] / -8033) - 1),
+                        1000 * (np.exp(self.temp[f"med_resage_{i}"] / -8033) - 1),
                         1)
                     ref, ref2, ref3 = "delta14R_Min_Range", "delta14R_Max_Range", "delta14R_permil_"
 
                 if self.dcp:
                     export_resage[i, 0] = np.round(
-                        100 * (1 - np.exp(hpds[:, 0] / -8033)), 2)
+                        100 * (1 - np.exp(hpds.iloc[0,0] / -8033)), 2)
                     export_resage[i, 1] = np.round(
-                        100 * (1 - np.exp(hpds[:, 1] / -8033)), 2)
+                        100 * (1 - np.exp(hpds.iloc[0,1] / -8033)), 2)
                     export_resage[i, 2] = np.round(
-                        100 * (1 - np.exp(self.dat["mode_resage"][i] / -8033)),
+                        100 * (1 - np.exp(self.temp[f"mode_resage_{i}"] / -8033)),
                         2)
                     export_resage[i, 3] = np.round(
-                        100 * (1 - np.exp(self.dat["mid1_resage"][i] / -8033)),
+                        100 * (1 - np.exp(self.temp[f"mid1_resage_{i}"] / -8033)),
                         2)
                     export_resage[i, 4] = np.round(
-                        100 * (1 - np.exp(self.dat["med_resage"][i] / -8033)),
+                        100 * (1 - np.exp(self.temp[f"med_resage_{i}"] / -8033)),
                         2)
                     ref, ref2, ref3 = "dcp_Min_Range", "dcp_Max_Range", "dcp_percent_"
 
@@ -842,7 +828,37 @@ class Radical(object):
                 )
                 hpds = self.temp[f'hpd_resage_{i}']
                 pdf_info = np.column_stack(
-                    (self.dat['mode_resage'][
+                    self.temp[f'mode_resage_{i}'],self.temp[f"mid1_resage_{i}"],self.temp[f"med_resage_{i}"])
+                
+                if self.f_14R:
+                    
+                    hpds.iloc[:,0]=round(np.exp(hpds.iloc[:,1]/-8033),4)
+                    hpds.iloc[:,1]=round(np.exp(hpds.iloc[:,0]/-8033),4)
+                    pdf_info=round(np.exp(pdf_info/-8033),4)
+
+
+                if self.delta_14R:                
+                    hpds.iloc[:,0] <- round(1000*(np.exp(hpds.iloc[:,1]/-8033)-1),1)
+                    hpds.iloc[:,1] <- round(1000*(np.exp(hpds.iloc[:,0]/-8033)-1),1)
+                    pdf_info <- round(1000*(np.exp(pdf_info/-8033)-1),1)
+
+                if self.dcp:
+                    hpds.iloc[:,0] <- round(100*(1-np.exp(hpds.iloc[:,0]/-8033)),2)
+                    hpds.iloc[:,1] <- round(100*(1-np.exp(hpds.iloc[:,1]/-8033)),2)
+                    pdf_info <- round(100*(1-np.exp(pdf_info/-8033)),2)
+
+                for j in range(len(hpds)):
+                    for k in range(2): 
+                        hpd_file.write(f"{hpds[j,k]}\t")
+                    hpd_file.write("\n")
+                
+                hpd_file.write("Mode\tMidRange\tMedian\n")
+                for l in range(len(pdf.info)):
+                    hpd_file.write(f"{pdf.info[l]}\t")
+                hpd_file.write("\n")
+                
+            hpd_file.close()
+        print("Export reservoir age completed successfully.")
 
     def __repr__(self):
         s="\nHi, ResAge is here to help you with reservoir age offset calculation!\n"+\
