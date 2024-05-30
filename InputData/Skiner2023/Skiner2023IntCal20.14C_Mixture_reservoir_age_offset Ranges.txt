@@ -1,0 +1,3 @@
+Mixture_reservoir_age_offsetranges at 95.0% confidence intervals
+Mode	MidRange	Median
+-50239.0	2069.0	95.0	

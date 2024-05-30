@@ -73,19 +73,12 @@ class Radical(abc_rad):
                 raise ValueError(
                     "Invalid value for cc. Please check the manual.")
         self.calcurve = pd.read_table(self.cc, header=None)
-
-
         self.uncalsteps = uncalsteps
         self.radsteps = radsteps
         self.convolsteps = convolsteps
-
-
-
         self.export_uncal_pdf = export_uncal_pdf
         self.export_resage_pdf = export_resage_pdf
         self.mixture_pdf = mixture_pdf
-
-
         self.theta = self.calcurve.iloc[:, 0]
         self.f_mu = np.exp(-self.calcurve.iloc[:, 1] / 8033)
         self.f_sigma = np.exp(
@@ -99,39 +92,31 @@ class Radical(abc_rad):
         #3.canculate hpd
 
         #updated data by interpolate the step year
-
-        calcurve = self.calcurve
         self.theta = np.arange(0, self.theta.max() + 1, self.yrsteps)
         self.rad = np.round(
-            interp1d(calcurve.iloc[:, 0], calcurve.iloc[:, 1])(self.theta))
+            interp1d(self.calcurve.iloc[:, 0], self.calcurve.iloc[:, 1])(self.theta))
         self.rad_sigma = np.round(
-            interp1d(calcurve.iloc[:, 0], calcurve.iloc[:, 2])(self.theta))
-        self.f_mu = interp1d(calcurve.iloc[:, 0], self.f_mu,
+            interp1d(self.calcurve.iloc[:, 0], self.calcurve.iloc[:, 2])(self.theta))
+        self.f_mu = interp1d(self.calcurve.iloc[:, 0], self.f_mu,
                              kind='linear')(self.theta)
-        self.f_sigma = interp1d(calcurve.iloc[:, 0],
+        self.f_sigma = interp1d(self.calcurve.iloc[:, 0],
                                 self.f_sigma,
                                 kind='linear')(self.theta)
 
-        dets = pd.read_csv(f"InputData/{self.name}/{self.name}{self.ext}",
+        self.dets = pd.read_csv(f"InputData/{self.name}/{self.name}{self.ext}",
                            sep=self.sep)
-        self.dets = dets
-        id_col = dets["id"]
-        self.id_col = id_col
-        rad_res = dets["Reservoir_derived_14C_age"]
-        self.rad_res = rad_res
-        rad_res_sd = dets["Reservoir_derived_14C_error"]
-        self.rad_res_sd = rad_res_sd
-        cal_age = dets["Calendar_age"]
-        self.cal_age = cal_age
-        cal_sigma = dets["Calendar_age_error"]
-        self.cal_sigma = cal_sigma
+        self.id_col = self.dets["id"]
+        self.rad_res = self.dets["Reservoir_derived_14C_age"]
+        self.rad_res_sd = self.dets["Reservoir_derived_14C_error"]
+        self.cal_age = self.dets["Calendar_age"]
+        self.cal_sigma = self.dets["Calendar_age_error"]
 
         self.dat = pd.DataFrame({
             'id': self.id_col,
-            'cal_age': cal_age,
-            'cal_sigma': cal_sigma,
-            'rad_res': rad_res,
-            'rad_res_sd': rad_res_sd
+            'cal_age': self.cal_age,
+            'cal_sigma': self.cal_sigma,
+            'rad_res': self.rad_res,
+            'rad_res_sd': self.rad_res_sd
         })
 
         temp = dict()
@@ -338,7 +323,6 @@ class Radical(abc_rad):
         m, n = spl_pdf.shape[0], uncal_conv.shape[0]
         s = np.column_stack((uncal_conv[:, 0], np.zeros(n)))
 
-        # Print uncal_conv[:, 1]
         spl_pdf_new = np.row_stack((s, spl_pdf))
         o = np.column_stack((spl_pdf[:, 0], np.zeros(m)))
         uncal_conv_new = np.row_stack((uncal_conv, o))
@@ -674,7 +658,7 @@ class Radical(abc_rad):
         maxi = []
 
         for i in range(len(self.dat)):
-            #print(temp[f"resage_{i}"])
+            
             mini.append(self.temp[f"resage_{i}"]["theta"].min())
             maxi.append(self.temp[f"resage_{i}"]["theta"].max())
 
@@ -743,9 +727,9 @@ class Radical(abc_rad):
                 export_resage[i, 4] = self.temp[f"med_resage_{i}"]
 
                 if self.f_14R:
-                    export_resage[i, 0] = np.round(np.exp(hpds.iloc[1] / -8033),
+                    export_resage[i, 0] = np.round(np.exp(hpds.iloc[0,1] / -8033),
                                                    4)
-                    export_resage[i, 1] = np.round(np.exp(hpds.iloc[0] / -8033),
+                    export_resage[i, 1] = np.round(np.exp(hpds.iloc[0,0] / -8033),
                                                    4)
                     export_resage[i, 2] = np.round(
                         np.exp(self.temp[f"mode_resage_{i}"] / -8033), 4)
