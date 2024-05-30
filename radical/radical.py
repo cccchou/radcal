@@ -207,7 +207,7 @@ class Radical(abc_rad):
 
             self._mixture_pdf
 
-        print("Export completed successfully")
+        print("\nWork has been done successfully, check outputs in your folder.\n")
         return 
 
     def _uncaldist(self, cal_age, cal_sigma):
