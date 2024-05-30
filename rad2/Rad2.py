@@ -4,9 +4,9 @@ import numpy as np
 from scipy.stats import norm
 from scipy.interpolate import interp1d
 import time
-from .abs import abs_rad
+from .abs import abc_rad
 from tqdm import tqdm
-class  Rad2(abs_rad):
+class  Rad2(abc_rad):
     def __init__(self,calibrate=False,export_cal_pdf=False):
         super().__init__(name=name,cc=cc,threshold=threshold,
             delta_14R=delta_14R,
