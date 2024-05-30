@@ -207,7 +207,8 @@ class Radical(abc_rad):
 
             self._mixture_pdf
 
-        return "Export age completed successfully"
+        print("Export completed successfully")
+        return 
 
     def _uncaldist(self, cal_age, cal_sigma):
         """
