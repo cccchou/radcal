@@ -31,25 +31,25 @@ a.colyear()
 ```
 
 
-##Options
+## Options
 Each script has additional options:
 
-rad2:
+`rad2`:
 
 calibrate: Calibrates atmospheric 14C ages (default: FALSE).
 cc: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 prob: Confidence interval for calibrated ranges (default: 0.95).
 export_cal_pdf: Exports the calibrated probability density functions (default: FALSE).
 
-colyear:
+`colyear`:
 
 cc: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
-radcal:
+`radcal`:
 
 mixture_pdf: Computes the reservoir age offset probability density function mixture (default: FALSE).
 export_uncal_pdf: Exports the uncalibrated probability density functions (default: FALSE).
-export_resage_pdf:Exports the uncalibrated probability density functions (default: True,it must set True because it export resage output.).
+export_resage_pdf:Exports the uncalibrated probability density functions (default: True, must set True because it export resage output.).
 cc: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
 ## Citation
@@ -60,16 +60,16 @@ Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calcul
 If using the F14R or δ14R metrics, cite: Soulet G, Skinner LC, Beaupré SR, Galy V, 2016. A note on reporting of reservoir 14C disequilibria and age offsets. Radiocarbon, in press doi: 10.1017/RDC.2015.22
 
 ## References
-Beck, J.W., et al., 2001. Extremely large variations of atmospheric 14C concentration during the last glacial period. Science 292(5526): 2453-2458.
-Blaauw, M., 2010. Methods and code for ‘classical’ age-modelling of radiocarbon sequences. Quaternary Geochronology 5(5): 512-518.
-Bondevik, S., et al., 1999. Late Weichselian Marine 14C Reservoir Ages at the Western Coast of Norway. Quaternary Research 52(1): 104-114.
-Hall, B.L., et al., 2010. Constant Holocene Southern-Ocean 14C reservoir ages and ice-shelf flow rates. Earth and Planetary Science Letters 296(1): 115-123.
-Hoffmann, D.L., et al., 2010. Towards radiocarbon calibration beyond 28ka using speleothems from the Bahamas. Earth and Planetary Science Letters 289(1): 1-10.
-Hogg, A.G., et al., 2013. SHCal13 Southern Hemisphere calibration, 0–50,000 cal yr BP. Radiocarbon 55(4): 1889-1903.
+1.Beck, J.W., et al., 2001. Extremely large variations of atmospheric 14C concentration during the last glacial period. Science 292(5526): 2453-2458.
+2.Blaauw, M., 2010. Methods and code for ‘classical’ age-modelling of radiocarbon sequences. Quaternary Geochronology 5(5): 512-518.
+3.Bondevik, S., et al., 1999. Late Weichselian Marine 14C Reservoir Ages at the Western Coast of Norway. Quaternary Research 52(1): 104-114.
+4.Hall, B.L., et al., 2010. Constant Holocene Southern-Ocean 14C reservoir ages and ice-shelf flow rates. Earth and Planetary Science Letters 296(1): 115-123.
+5.Hoffmann, D.L., et al., 2010. Towards radiocarbon calibration beyond 28ka using speleothems from the Bahamas. Earth and Planetary Science Letters 289(1): 1-10.
+6.Hogg, A.G., et al., 2013. SHCal13 Southern Hemisphere calibration, 0–50,000 cal yr BP. Radiocarbon 55(4): 1889-1903.
 Reimer, P.J., et al., 2009. IntCal09 and Marine09 Radiocarbon Age Calibration Curves, 0–50,000 years cal BP. Radiocarbon 51(4): 1111–1150.
-Reimer, P.J., et al., 2013. IntCal13 and Marine13 Radiocarbon Age Calibration Curves 0–50,000 Years cal BP. Radiocarbon 55(4): 1869-1887.
-Siani, G., et al., 2000. Radiocarbon reservoir ages in the Mediterranean Sea and Black Sea. Radiocarbon 42(2): 271-280.
+7.Reimer, P.J., et al., 2013. IntCal13 and Marine13 Radiocarbon Age Calibration Curves 0–50,000 Years cal BP. Radiocarbon 55(4): 1869-1887.
+8.Siani, G., et al., 2000. Radiocarbon reservoir ages in the Mediterranean Sea and Black Sea. Radiocarbon 42(2): 271-280.
 Soulet, G., 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations. Quaternary Geochronology 29: 97-103 doi: 10.1016/j.quageo.2015.05.023
-Southon, J., et al., 2012. A high-resolution record of atmospheric 14C based on Hulu Cave speleothem H82. Quaternary Science Reviews 33: 32-41.
+9.Southon, J., et al., 2012. A high-resolution record of atmospheric 14C based on Hulu Cave speleothem H82. Quaternary Science Reviews 33: 32-41.
 
 
