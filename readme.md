@@ -8,7 +8,7 @@
 pip install resages
 ```
 
-	##Note## Python needs to be ##> version 3.10## because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
+	**Note** Python needs to be **> version 3.10** because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
 
 ## Usage
 
@@ -36,21 +36,21 @@ Each script has additional options:
 
 `rad2`:
 
-##calibrate##: Calibrates atmospheric 14C ages (default: FALSE).
-##cc##: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
-##prob##: Confidence interval for calibrated ranges (default: 0.95).
-##export_cal_pdf##: Exports the calibrated probability density functions (default: FALSE).
+**calibrate**: Calibrates atmospheric 14C ages (default: FALSE).
+**cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
+**prob**: Confidence interval for calibrated ranges (default: 0.95).
+**export_cal_pdf**: Exports the calibrated probability density functions (default: FALSE).
 
 `colyear`:
 
-##cc##: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
+**cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
 `radcal`:
 
-##mixture_pdf##: Computes the reservoir age offset probability density function mixture (default: FALSE).
-##export_uncal_pdf##: Exports the uncalibrated probability density functions (default: FALSE).
-##export_resage_pdf##:Exports the uncalibrated probability density functions (default: True, must set True because it export resage output.).
-##cc##: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
+**mixture_pdf**: Computes the reservoir age offset probability density function mixture (default: FALSE).
+**export_uncal_pdf**: Exports the uncalibrated probability density functions (default: FALSE).
+**export_resage_pdf**:Exports the uncalibrated probability density functions (default: True, must set True because it export resage output.).
+**cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
 ## Citation
 This python program was adapted from the ##Resage R program## 
