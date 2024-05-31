@@ -8,7 +8,7 @@ resages is a package dedicated to the proper calculation of reservoir age offset
 pip install resages
 ```
 
-**Note** Python needs to be **> 3.10** because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
+**Note:** **Python** needs to be **> 3.10** because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
 
 ## Usage
 
