@@ -1,4 +1,4 @@
-# resages Package
+# resages
 
 resages is a package dedicated to the proper calculation of reservoir age offsets, particularly when dealing with pairs of radiocarbon (14C) and calendar ages. This package includes a set of radiocarbon calibration curves (IntCal13,  SHCal13，and IntCal20), a template folder, various examples, a manual, and three scripts written in python. To be precise, they are converted to python based on the Resage R language module(/ResAge_12_2015.zip)
 
@@ -59,8 +59,8 @@ Each script has additional options:
 **cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
 ## Citation
-This python program was adapted from the ##Resage R program## 
-Please cite the following publications when using the ##ResAge package##:
+This python program was adapted from the **Resage R program** 
+Please cite the following publications when using the **ResAge package**:
 
 - Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations. Quaternary Geochronology 29:97-103, doi: 10.1016/j.quageo.2015.05.023
 If using the F14R or δ14R metrics, cite: 
