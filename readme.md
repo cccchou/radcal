@@ -1,4 +1,4 @@
-# resages
+# resages-calculation of 14C reservoir age offsets
 [![PyPI version](https://badge.fury.io/py/resages.svg)](https://badge.fury.io/py/resages)
 [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.quageo.2015.05.023-blue)](https://www.sciencedirect.com/science/article/pii/S1871101415300273)
 
