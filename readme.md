@@ -58,6 +58,10 @@ Each script has additional options:
 
 **cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ## Citation
 This python program was adapted from the **Resage R program** 
 Please cite the following publications when using the **ResAge package**:
