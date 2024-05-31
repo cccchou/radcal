@@ -1,3 +1,3 @@
 from radical.radical import Radical
-a=Radical("Skiner2023",export_uncal_pdf=False, export_resage_pdf=False,threshold=1e-10)
+a=Radical("example_radcal_Southon2012", export_resage_pdf=True,threshold=1e-6)
 a.radcal()
