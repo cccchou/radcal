@@ -63,6 +63,7 @@ This python program was adapted from the **Resage R program**
 Please cite the following publications when using the **ResAge package**:
 
 - Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations. Quaternary Geochronology 29:97-103, doi: 10.1016/j.quageo.2015.05.023
+
 If using the F14R or δ14R metrics, cite: 
 - Soulet G, Skinner LC, Beaupré SR, Galy V, 2016. A note on reporting of reservoir 14C disequilibria and age offsets. Radiocarbon, in press doi: 10.1017/RDC.2015.22
 
