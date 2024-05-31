@@ -4,32 +4,32 @@ resages is a package dedicated to the proper calculation of reservoir age offset
 
 ## Installation
 
+```sh
 pip install resages
+```
 
-It is worth noting that python needs to be > version 3.10 because of the use of the match statement. If you don't want to upgrade python, download the source code and change the match statement to an if statement.
+It is worth noting that Python needs to be > version 3.10 because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
 
-##Usage
-resages consists of three programs: radical, rad2, colyear, the corresponding function application scenarios please see the manual in detail
+## Usage
 
-###quick_use
-radical
+Resages consists of three programs: `radical`, `rad2`, `colyear`. The corresponding function application scenarios can be found in the manual.
+
+### Quick Use
+
+```python
 from resages.radical.radical import Radical
-a=Radical("example_radcal_Southon2012", export_resage_pdf=True,threshold=1e-6)
+a = Radical("example_radcal_Southon2012", export_resage_pdf=True, threshold=1e-6)
 a.radcal()
 
-rad2
 from resages.rad2.Rad2 import Rad2
-a=Rad2(name="example_rad2")
+a = Rad2(name="example_rad2")
 a.rad2()
 
-colyear
 from resages.colyear.colyear import colyear
-a=colyear(name="example_colyear")
+a = colyear(name="example_colyear")
 a.colyear()
-
-##Running the Scripts
-Enter your data following the appropriate template as a .csv file. Templates are available in the Templates folder.
-Save your data file in a folder inside InputData. For example, if your data file is called MyData.csv, save it in ResAge/InputData/MyData/.
+```
+```
 
 ##Options
 Each script has additional options:
@@ -52,13 +52,13 @@ export_uncal_pdf: Exports the uncalibrated probability density functions (defaul
 export_resage_pdf:Exports the uncalibrated probability density functions (default: True,it must set True because it export resage output.).
 cc: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
-##Citation
+## Citation
 This python program was adapted from the Resage R program 
 Please cite the following publications when using the ResAge package:
 
 Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations. Quaternary Geochronology 29:97-103, doi: 10.1016/j.quageo.2015.05.023
 If using the F14R or δ14R metrics, cite: Soulet G, Skinner LC, Beaupré SR, Galy V, 2016. A note on reporting of reservoir 14C disequilibria and age offsets. Radiocarbon, in press doi: 10.1017/RDC.2015.22
-References
+## References
 Beck, J.W., et al., 2001. Extremely large variations of atmospheric 14C concentration during the last glacial period. Science 292(5526): 2453-2458.
 Blaauw, M., 2010. Methods and code for ‘classical’ age-modelling of radiocarbon sequences. Quaternary Geochronology 5(5): 512-518.
 Bondevik, S., et al., 1999. Late Weichselian Marine 14C Reservoir Ages at the Western Coast of Norway. Quaternary Research 52(1): 104-114.
