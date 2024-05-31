@@ -1,5 +1,7 @@
 # resages
+[![PyPI version](https://badge.fury.io/py/resages.svg)](https://badge.fury.io/py/resages)
 
+## Description
 resages is a package dedicated to the proper calculation of reservoir age offsets, particularly when dealing with pairs of radiocarbon (14C) and calendar ages. This package includes a set of radiocarbon calibration curves (IntCal13,  SHCal13，and IntCal20), a template folder, various examples, a manual, and three scripts written in python. To be precise, they are converted to python based on the Resage R language module(/ResAge_12_2015.zip)
 
 ## Installation

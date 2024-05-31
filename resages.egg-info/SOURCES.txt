@@ -1,3 +1,4 @@
+LICENSE
 setup.py
 resages/__init__.py
 resages.egg-info/PKG-INFO
