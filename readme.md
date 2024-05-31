@@ -8,11 +8,11 @@ resages is a package dedicated to the proper calculation of reservoir age offset
 pip install resages
 ```
 
-	**Note** Python needs to be **> version 3.10** because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
+**Note** Python needs to be **> version 3.10** because of the use of the `match` statement. If you don't want to upgrade Python, download the source code and change the `match` statement to an `if` statement.
 
 ## Usage
 
-	Resages consists of three programs: `radical`, `rad2`, `colyear`. The corresponding function application scenarios can be found in the manual.This manual is the original author's source code manual for the R language
+Resages consists of three programs: `radical`, `rad2`, `colyear`. The corresponding function application scenarios can be found in the manual.This manual is the original author's source code manual for the R language
 
 ### Quick Use
 
