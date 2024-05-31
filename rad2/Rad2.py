@@ -7,7 +7,12 @@ import time
 from .abs import abc_rad
 from tqdm import tqdm
 class  Rad2(abc_rad):
-    def __init__(self,calibrate=False,export_cal_pdf=False):
+    def __init__(self,name,cc=1,threshold=1e-6,delta_14R=False,
+            dcp=False,
+            f_14R=False,
+            yrsteps=1,
+            prob=0.95,
+            hpdsteps=1,calibrate=True,export_cal_pdf=False):
         super().__init__(name=name,cc=cc,threshold=threshold,
             delta_14R=delta_14R,
             dcp=dcp,
@@ -18,7 +23,7 @@ class  Rad2(abc_rad):
         self.calibrate = calibrate
         self.export_cal_pdf =export_cal_pdf
  
-        match cc:
+        match self.cc:
             case 1:
                 self.cc = "IntCal20.14C"
             case 2:
@@ -28,22 +33,21 @@ class  Rad2(abc_rad):
             case _:
                 raise ValueError(
                     "Invalid value for cc. Please check the manual.")
-		self._assert()
+        self._assert
 
         self.calcurve = pd.read_table(self.cc, header=None)
-		self.theta = self.calcurve.iloc[:, 0]
+        self.theta = self.calcurve.iloc[:, 0]
         self.f_mu = np.exp(-self.calcurve.iloc[:, 1] / 8033)
         self.f_sigma = np.exp(-(self.calcurve.iloc[:, 1] - self.calcurve.iloc[:, 2]) / 8033) - self.f_mu
 
-        self.f_cage = np.exp(-self.rad_atm / 8033)
-        self.f_error = np.exp(-(self.rad_atm - self.rad_atm_sd) / 8033) - self.f_cage
+        
 		
 		
 
     def rad2(self):
-        dets = pd.read_csv(f"InputData/{name}/{name}{ext}", sep=sep)
+        dets = pd.read_csv(f"InputData/{self.name}/{self.name}{self.ext}", sep=self.sep)
 
-        dat = pd.DataFrame({"f_cage": self.f_cage, "f_error": self.f_error})
+        
 
 
 
@@ -53,7 +57,9 @@ class  Rad2(abc_rad):
             "Reservoir_derived_14C_error"], dets["Atmosphere_derived_14C_age"], dets["Atmosphere_derived_14C_error"]
         self.fm_res, self.fm_res_sd, self.fm_atm, self.fm_atm_sd = np.exp(self.rad_res / -8033), np.exp(-(self.rad_res - self.rad_res_sd) / 8033) - np.exp(
             self.rad_res / -8033), np.exp(self.rad_atm / -8033), np.exp(-(self.rad_atm - self.rad_atm_sd) / 8033) - np.exp(self.rad_atm / -8033)
-
+        self.f_cage = np.exp(-self.rad_atm / 8033)
+        self.f_error = np.exp(-(self.rad_atm - self.rad_atm_sd) / 8033) - self.f_cage
+        self.dat = pd.DataFrame({"f_cage": self.f_cage, "f_error": self.f_error})
         # calculate sample reservoir ages
         print("Calculating reservoir age offsets...\n")
         self.Reservoir_age_offset = np.round(self.rad_res - self.rad_atm)
@@ -77,15 +83,15 @@ class  Rad2(abc_rad):
         if self.dcp:
             output = pd.concat([output, pd.DataFrame({"DCP": self.DCP, "DCP_error": self.DCP_error})], axis=1)
         output.to_csv(f"InputData/{self.name}/{self.name}_out{self.ext}", index=False)
-        if calibrate:
-            self._calibrate()
-        if export_cal_pdf:
-            self._export_cal_pdf()
+        if self.calibrate:
+            self._calibrate
+        if self.export_cal_pdf:
+            self._export_cal_pdf
         print("\nWork has been done successfully, check outputs in your folder.\n")
         return
 
-    def caldist(self):
-        cal = pd.DataFrame({"theta": self.theta, "pdf": norm.pdf(self.f_mu, self.f_cage, np.sqrt(self.f_error**2 + self.f_sigma**2))})
+    def _caldist(self,f_cage,f_error,f_sigma):
+        cal = pd.DataFrame({"theta": self.theta, "pdf": norm.pdf(self.f_mu, f_cage, np.sqrt(f_error**2 + f_sigma**2))})
         cal=cal[cal["pdf"]>0]
         f = interp1d(cal.iloc[:, 0], cal.iloc[:, 1])
         newx=np.arange(cal.iloc[:, 0].min(), cal.iloc[:, 0].max()+1, self.yrsteps)
@@ -94,7 +100,7 @@ class  Rad2(abc_rad):
         cal["pdf"]/= cal["pdf"].sum()
         return cal[cal["pdf"] > self.threshold]
 
-    def hpd(dat):
+    def _hpd(self,dat):
         f=interp1d(dat["theta"],dat["pdf"])
         newx=np.arange(min(dat["theta"]),max(dat["theta"])+1,self.yrsteps)
 
@@ -128,7 +134,7 @@ class  Rad2(abc_rad):
 
 
 
-        print(f"Calibrating atmospheric 14C ages using the {self.ccname} calibration curve...\n")
+        print(f"Calibrating atmospheric 14C ages using the {self.name} calibration curve...\n")
 
         border = 0
         if any((self.rad_atm - self.rad_atm_sd) < min(self.calcurve.iloc[:, 1] + self.calcurve.iloc[:, 2])):
@@ -153,24 +159,23 @@ class  Rad2(abc_rad):
                       desc="processing",
                       total=len(self.f_cage),
                       colour="blue"):
-            calib = self._caldist(self)
+            calib = self._caldist(f_cage=self.f_cage[i],f_error=self.f_error[i],f_sigma=self.f_sigma[i])
             temp[f"calib_{i}"] = calib["pdf"]
             temp[f"hpd_{i}"] = self._hpd(calib)
-            self.dat.loc[i,"mid1"] = round((temp[f"hpd_{i}"]["min"].values[0] + temp[f"hpd_{i}"]["max"].values[0]) / 2)
+            temp[f"mid1_{i}"] = round((temp[f"hpd_{i}"]["min"].values[0] + temp[f"hpd_{i}"]["max"].values[0]) / 2)
             yrs = calib["theta"]
-            self.dat.loc[i,"mid2"] = round(np.mean([max(yrs), min(yrs)]))
-            self.dat.loc[i,"wmn"] = round(np.average(calib["theta"], weights=1/calib["pdf"]))
-            self.dat.loc[i,"med"] =calib[calib["pdf"].cumsum()<=0.5]["theta"].iloc[-1]
-            self.dat.loc[i,"mode"]=calib[calib["pdf"]==calib["pdf"].max()]["theta"].values
+            temp[f"mid2_{i}"] = round(np.mean([max(yrs), min(yrs)]))
+            temp[f"wmn_{i}"] = round(np.average(calib["theta"], weights=1/calib["pdf"]))
+            temp[f"med_{i}"] =calib[calib["pdf"].cumsum()<=0.5]["theta"].iloc[-1]
+            temp[f"mode_{i}"]=calib[calib["pdf"]==calib["pdf"].max()]["theta"].values
         self.temp=temp
-        
-		print(f"Calibrating atmospheric 14C ages using the {self.ccname} calibration curve has done")
-		return
+        print(f"Calibrating atmospheric 14C ages using the {self.name} calibration curve has done")
+        return
 
 
 
 
-	@property
+    @property
     def _export_cal_pdf(self):
         print("Exporting your calibrated ages...")
         mini=[]
@@ -216,9 +221,9 @@ class  Rad2(abc_rad):
             for i in range(len(self.dat)):
                 export_calib = pd.DataFrame({"CalibratedMinRange_at_{}%".format(100 * self.prob): hpds["min"].values,
                                                 "CalibratedMaxRange_at_{}%".format(100 * self.prob): hpds["max"].values,
-                                                "Mode": self.dat[f"mode"][i],
-                                                "MidRange": self.dat[f"mid1"][i],
-                                                "Median": self.dat[f"med"][i]})
+                                                "Mode": self.temp[f"mode_{i}"],
+                                                "MidRange": self.temp[f"mid1_{i}"],
+                                                "Median": self.temp[f"med_{i}"]})
 
             colnames = [f"{self.id_col[i]}_{col}" for col in export_calib.columns]
             export_calib.columns = colnames
@@ -235,7 +240,7 @@ class  Rad2(abc_rad):
                     f"\n\nIdentification_number: {self.id_col[i]}\nCal_year_MinRange\tCal_year_MaxRange\tprobability\n")
                 hpds = self.temp[f"hpd_{i}"]
                 pdf_info = pd.DataFrame(
-                    {"Mode": [self.dat.loc[i,f"mode"]], "MidRange": [self.dat.loc[i,f"mid1"]], "Median": [self.dat.loc[i,f"med"]]})
+                    {"Mode": [self.temp[f"mode_{i}"]], "MidRange": [self.temp[i,f"mid1_{i}"]], "Median": [self.temp[f"med_{i}"]]})
 
                 for j in range(len(hpds)):
                     for k in range(3):
@@ -249,7 +254,7 @@ class  Rad2(abc_rad):
                 hpd_file.write("\n")
 
             hpd_file.close()
-		print("Exporting your calibrated ages has done")
+        print("Exporting your calibrated ages has done")
 
         
 
