@@ -1,7 +1,7 @@
-# resages
-**——calculation of 14C reservoir age offsets**
+# resages——calculation of 14C reservoir age offsets
+
 <p align="right">
-  <img src="https://github.com/cccchou/radcal/blob/master/logo.png" alt="Logo" width="200"/>
+  <img src="https://github.com/cccchou/radcal/blob/master/logo.png" alt="Logo" width="100"/>
 </p>
 
 [![PyPI version](https://badge.fury.io/py/resages.svg)](https://badge.fury.io/py/resages)
