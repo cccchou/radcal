@@ -1,5 +1,5 @@
 # resages
-**   -calculation of 14C reservoir age offsets**
+**\t-calculation of 14C reservoir age offsets**
 <p align="right">
   <img src="https://github.com/cccchou/radcal/blob/master/logo.png" alt="Logo" width="200"/>
 </p>
