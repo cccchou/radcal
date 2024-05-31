@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: resages
+Version: 0.11
+Summary: Methods and codes for reservoir atmosphere 14C age offset calculations
+Home-page: https://github.com/cccchou/radcal
+Author: Alex_chou
+Author-email: alex_chou@sjtu.edu.com
+Requires-Python: >=3.10
