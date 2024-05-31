@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='resages',
-    version='0.11',
+    version='0.2',
     py_modules=['resages'],
-    packages=find_packages(include=['resage', 'resage.*']),
+    packages=find_packages(include=['resages', 'resages.*']),
     
     install_requires=[
         
