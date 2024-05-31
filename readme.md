@@ -37,8 +37,11 @@ Each script has additional options:
 `rad2`:
 
 **calibrate**: Calibrates atmospheric 14C ages (default: FALSE).
+
 **cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
+
 **prob**: Confidence interval for calibrated ranges (default: 0.95).
+
 **export_cal_pdf**: Exports the calibrated probability density functions (default: FALSE).
 
 `colyear`:
@@ -48,8 +51,11 @@ Each script has additional options:
 `radcal`:
 
 **mixture_pdf**: Computes the reservoir age offset probability density function mixture (default: FALSE).
+
 **export_uncal_pdf**: Exports the uncalibrated probability density functions (default: FALSE).
+
 **export_resage_pdf**:Exports the uncalibrated probability density functions (default: True, must set True because it export resage output.).
+
 **cc**: Selects the calibration curve (1 for IntCal20, 2 for Cal13, 3 for SHIntCal13).
 
 ## Citation
