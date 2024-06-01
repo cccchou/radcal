@@ -30,5 +30,7 @@ setup(
     author_email='alex_chou@sjtu.edu.com',
     description='Methods and codes for reservoir atmosphere 14C age offset calculations',
     url='https://github.com/cccchou/radcal',
+    tests_require=['pytest'],
+    
 )
 

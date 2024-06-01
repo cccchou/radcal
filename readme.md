@@ -38,6 +38,36 @@ a = Colyear(name="example_colyear")
 a.colyear()
 ```
 
+## test
+```sh
+python setup.py test
+```
+there are three tests.py in tests folder, if run successfully, the output will be 
+
+```sh
+Reservoir age offsets are calculated using the IntCal20.14C calibration curve.
+
+Work has been done successfully, check output in your folder.
+
+
+Calculating reservoir age offsets...
+
+Calibrating atmospheric 14C ages using the IntCal20.14C calibration curve...
+
+processing: 100%|███████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 142.85it/s]
+Calibrating atmospheric 14C ages using the IntCal20.14C calibration curve has done
+
+Work has been done successfully, check outputs in your folder.
+
+
+running
+processing: 100%|██████████████████████████████████████████████████████████████████████| 80/80 [00:06<00:00, 11.88it/s]
+the total spending time is 0.0min6.7s
+
+Exporting your reservoir ages
+Export reservoir age completed successfully.
+```
+
 
 ## Options
 Each script has additional options:

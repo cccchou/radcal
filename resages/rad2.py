@@ -134,7 +134,7 @@ class  Rad2(abc_rad):
 
 
 
-        print(f"Calibrating atmospheric 14C ages using the {self.name} calibration curve...\n")
+        print(f"Calibrating atmospheric 14C ages using the {self.cc} calibration curve...\n")
 
         border = 0
         if any((self.rad_atm - self.rad_atm_sd) < min(self.calcurve.iloc[:, 1] + self.calcurve.iloc[:, 2])):
@@ -169,7 +169,7 @@ class  Rad2(abc_rad):
             temp[f"med_{i}"] =calib[calib["pdf"].cumsum()<=0.5]["theta"].iloc[-1]
             temp[f"mode_{i}"]=calib[calib["pdf"]==calib["pdf"].max()]["theta"].values
         self.temp=temp
-        print(f"Calibrating atmospheric 14C ages using the {self.name} calibration curve has done")
+        print(f"Calibrating atmospheric 14C ages using the {self.cc} calibration curve has done")
         return
 
 
