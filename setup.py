@@ -3,7 +3,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setup(
     name='resages',
-    version='0.21',
+    version='0.22',
     py_modules=['resages'],
     packages=find_packages(include=['resages', 'resages.*']),
     

@@ -1,4 +1,4 @@
-# resages——calculation of 14C reservoir age offsets
+﻿# resages——calculation of 14C reservoir age offsets
 
 <p align="right">
   <img src="https://github.com/cccchou/radcal/blob/master/logo.png" alt="Logo" width="130"/>
@@ -8,7 +8,7 @@
 [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.quageo.2015.05.023-blue)](https://www.sciencedirect.com/science/article/pii/S1871101415300273)
 
 ## Description
-resages is a package dedicated to the proper calculation of reservoir age offsets, particularly when dealing with pairs of radiocarbon (14C) and calendar ages. This package includes a set of radiocarbon calibration curves (IntCal13,  SHCal13，and IntCal20), a template folder, various examples, a manual, and three scripts written in python. To be precise, they are converted to python based on the Resage R language module(/ResAge_12_2015.zip)
+resages is a package dedicated to the proper calculation of reservoir age offsets, particularly when dealing with pairs of radiocarbon (14C) and calendar ages. This package includes a set of radiocarbon calibration curves (IntCal13,  SHCal13，and IntCal20), a template folder, various examples, a manual, and three scripts written in python. They are adapted from the folder **(/ResAge_12_2015.zip)** 
 
 ## Installation
 
@@ -20,21 +20,21 @@ pip install resages
 
 ## Usage
 
-Resages consists of three programs: `radical`, `rad2`, `colyear`. The corresponding function application scenarios can be found in the manual.This manual is the original author's source code manual for the R language
+resages consists of three programs: `radical`, `rad2`, `colyear`. The corresponding function application scenarios can be found in the manual.This manual is the author's source code manual for the R language
 
 ### Quick Use
 
 ```python
-from resages.radical.radical import Radical
+from resages.radical import Radical
 a = Radical("example_radcal_Southon2012", export_resage_pdf=True, threshold=1e-6)
 a.radcal()
 
-from resages.rad2.Rad2 import Rad2
+from resages.rad2 import Rad2
 a = Rad2(name="example_rad2")
 a.rad2()
 
-from resages.colyear.colyear import colyear
-a = colyear(name="example_colyear")
+from resages.colyear import Colyear
+a = Colyear(name="example_colyear")
 a.colyear()
 ```
 
@@ -71,8 +71,8 @@ Each script has additional options:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
-This python program was adapted from the **Resage R program** 
-Please cite the following publications when using the **ResAge package**:
+This python program was adapted from the **folder(/ResAge_12_2015.zip)** 
+Please cite the following publications when using the **resages**:
 
 - Soulet G, 2015. Methods and codes for reservoir-atmosphere 14C age offset calculations. Quaternary Geochronology 29:97-103, doi: 10.1016/j.quageo.2015.05.023
 

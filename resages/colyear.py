@@ -7,7 +7,7 @@ import time
 from .abs import abc_rad
 from tqdm import tqdm
 
-class colyear(abc_rad):
+class Colyear(abc_rad):
     def __init__(self,name,cc=1,delta_14R=False,
             dcp=False,
             f_14R=False,
